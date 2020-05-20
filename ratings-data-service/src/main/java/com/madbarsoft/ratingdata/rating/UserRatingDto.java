@@ -1,4 +1,4 @@
-package com.madbarsoft.moviecatalog.catalog;
+package com.madbarsoft.ratingdata.rating;
 
 import java.util.List;
 
@@ -15,15 +15,6 @@ public class UserRatingDto {
 	public void setUserRating(List<RatingDto> userRating) {
 		this.userRating = userRating;
 	}
-	
-	
-
-	@Override
-	public String toString() {
-		return "UserRatingDto [userRating=" + userRating + "]";
-	}
-	
-	
 	
 	
 	

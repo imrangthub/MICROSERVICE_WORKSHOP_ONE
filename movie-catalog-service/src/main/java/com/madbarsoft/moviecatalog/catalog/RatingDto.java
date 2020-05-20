@@ -4,6 +4,8 @@ public class RatingDto {
 	
     private String movieId;
     private int rating;
+    
+    public RatingDto() {}
 
     public RatingDto(String movieId, int rating) {
         this.movieId = movieId;

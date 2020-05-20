@@ -20,6 +20,23 @@ public class RatingController {
 
 	}
 	
+	@GetMapping("/users2/{userId}")
+	public UserRatingDto userRating(@PathVariable("userId") String userId) {
+		
+		UserRatingDto userRatingDto = new UserRatingDto();
+
+        List<RatingDto> ratingsList = Arrays.asList(
+                new RatingDto("11111", 11),
+                new RatingDto("22222", 22)
+        );
+        
+        userRatingDto.setUserRating(ratingsList);
+        
+        return userRatingDto;
+
+	}
+	
+	
 	@GetMapping("/users/{userId}")
 	public List<RatingDto> getList(@PathVariable("userId") String userId) {
 

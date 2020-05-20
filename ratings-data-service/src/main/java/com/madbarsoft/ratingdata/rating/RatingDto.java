@@ -2,6 +2,8 @@ package com.madbarsoft.ratingdata.rating;
 
 public class RatingDto {
 	
+    public RatingDto() {}
+	
     private String movieId;
     private int rating;
 
