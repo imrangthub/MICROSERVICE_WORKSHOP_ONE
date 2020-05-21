@@ -12,24 +12,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/catalog")
-public class CatalogController {
+@RequestMapping("/catalog-only-rest")
+public class CatalogWithOnlyRestController {
 
 	@Autowired
 	private RestTemplate restTemplate;
-
+	
+	
+	
+	
 
 	@RequestMapping("/list/{userId}")
 	public List<CatalogItemDto> listOfMovieCatalogItem(@PathVariable("userId") String userId) {
 
 		List<CatalogItemDto> catalogItemList = new ArrayList<CatalogItemDto>();
 
-		UserRatingDto userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/foo", UserRatingDto.class);
+		UserRatingDto userRating = restTemplate.getForObject("http://localhost:8083/ratingsdata/users2/foo", UserRatingDto.class);
 
 		System.out.println("userRating res: " + userRating);
 
 		for (RatingDto ratingObj : userRating.getUserRating()) {
-			MovieDto movie = restTemplate.getForObject("http://movie-info-service/movies/" + ratingObj.getMovieId(), MovieDto.class);
+			MovieDto movie = restTemplate.getForObject("http://localhost:8082/movies/" + ratingObj.getMovieId(), MovieDto.class);
 
 			catalogItemList.add(new CatalogItemDto(movie.getName(), "Description", ratingObj.getRating()));
 		}
