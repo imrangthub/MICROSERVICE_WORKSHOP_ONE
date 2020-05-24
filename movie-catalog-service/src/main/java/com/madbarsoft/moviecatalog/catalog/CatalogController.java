@@ -24,7 +24,7 @@ public class CatalogController {
 
 		List<CatalogItemDto> catalogItemList = new ArrayList<CatalogItemDto>();
 
-		UserRatingDto userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/foo", UserRatingDto.class);
+		UserRatingDto userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/"+userId, UserRatingDto.class);
 
 		System.out.println("userRating res: " + userRating);
 
