@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
@@ -19,43 +20,94 @@ public class CatalogController {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	
-	@RequestMapping("/list/{userId}")
-	@HystrixCommand(fallbackMethod="getFallBackCatalog")
-	public List<CatalogItemDto> listOfMovieCatalogItem(@PathVariable("userId") String userId) {
+//	@Autowired
+//	private MovieInfoService movieInfoService;
+//
+//	@Autowired
+//	private UserRatingInfoService userRatingInfoService;
 
+	@RequestMapping("/list/{userId}")
+	@HystrixCommand(fallbackMethod = "getFallBackCatalog")
+	public List<CatalogItemDto> getCatalog(@PathVariable("userId") String userId) {
 		List<CatalogItemDto> catalogItemList = new ArrayList<CatalogItemDto>();
 
-		UserRatingDto userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/" + userId,
-				UserRatingDto.class);
-
-		System.out.println("userRating res: " + userRating);
+		UserRatingDto userRating = getUserRating(userId);
 
 		for (RatingDto ratingObj : userRating.getUserRating()) {
-			MovieDto movie = restTemplate.getForObject("http://movie-info-service/movies/" + ratingObj.getMovieId(),
-					MovieDto.class);
-
+			MovieDto movie = getMovieDto(ratingObj);
 			catalogItemList.add(new CatalogItemDto(movie.getName(), "Description", ratingObj.getRating()));
 		}
 
-		System.out.println("catalogItemList:" + catalogItemList);
-
+		System.out.println("catalogItemList Update:" + catalogItemList);
 		return catalogItemList;
 
 	}
-	
-	public List<CatalogItemDto> getFallBackCatalog(@PathVariable("userId") String userId) { 
+
+	@HystrixCommand(fallbackMethod = "getFallBackMovieDto")
+	public MovieDto getMovieDto(RatingDto ratingObj) {
+		return restTemplate.getForObject("http://movie-info-service/movies/" + ratingObj.getMovieId(), MovieDto.class);
+	}
+
+	@HystrixCommand(fallbackMethod = "getFallBackUserRating")
+	public UserRatingDto getUserRating(String userId) {
+		UserRatingDto userRatingDto = null;
+		userRatingDto = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/" + userId,
+				UserRatingDto.class);
+		System.out.println("userRating Update res: " + userRatingDto);
+		return userRatingDto;
+	}
+
+	// 1
+	public List<CatalogItemDto> getFallBackCatalog(@PathVariable("userId") String userId) {
+		System.out.println("#######################  Msg Form getFallBackCatalog ##############################");
 		return Arrays.asList(new CatalogItemDto("No Movie found", "", 0));
 	}
 
-	
-	
-	
-	
-	
+	// 2
+	public UserRatingDto getFallBackUserRating() {
+		System.out.println("#######################  Msg Form getFallBackUserRating ##############################");
+		UserRatingDto userRating = new UserRatingDto();
+		userRating.setUserRating(Arrays.asList(new RatingDto("0", 0)));
+		return userRating;
+	}
+
+	// 3
+	public MovieDto getFallBackMovieDto(RatingDto ratingObj) {
+		System.out.println("#######################  Msg Form getFallBackMovieDto ##############################");
+		return new MovieDto("No Id", "No Name");
+	}
+
+	public List<CatalogItemDto> getFallBackCatalogOld(@PathVariable("userId") String userId) {
+		return Arrays.asList(new CatalogItemDto("No Movie found", "", 0));
+	}
+
+//	@RequestMapping("/list/{userId}")
+//	@HystrixCommand(fallbackMethod="getFallBackCatalog")
+//	public List<CatalogItemDto> listOfMovieCatalogItem(@PathVariable("userId") String userId) {
+//
+//		List<CatalogItemDto> catalogItemList = new ArrayList<CatalogItemDto>();
+//
+//		UserRatingDto userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users2/" + userId,
+//				UserRatingDto.class);
+//
+//		System.out.println("userRating res: " + userRating);
+//
+//		for (RatingDto ratingObj : userRating.getUserRating()) {
+//			MovieDto movie = restTemplate.getForObject("http://movie-info-service/movies/" + ratingObj.getMovieId(),
+//					MovieDto.class);
+//
+//			catalogItemList.add(new CatalogItemDto(movie.getName(), "Description", ratingObj.getRating()));
+//		}
+//
+//		System.out.println("catalogItemList:" + catalogItemList);
+//
+//		return catalogItemList;
+//
+//	}
+//	
 
 	@RequestMapping("/{userId}")
-	public List<CatalogItemDto> getCatalog(@PathVariable("userId") String userId) {
+	public List<CatalogItemDto> getCatalogOld(@PathVariable("userId") String userId) {
 
 		List<RatingDto> ratingsList2 = restTemplate.getForObject("http://localhost:8083/ratingsdata/users/foo",
 				List.class);
