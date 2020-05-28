@@ -1,0 +1,19 @@
+server:
+      port: 8081
+app:
+   name: My Client Service 1
+   description: Welcome to ${app.name}
+   
+my: 
+  greeting: Hello World Update
+  list: 
+      value: One, Two, Three
+      
+msg: 
+   greeting1: This is Greeting 1 From application YML file
+
+management.endpoints.web.exposure.include: "*"
+
+spring.cloud.config.uri: http://localhost:8888
+
+spring.application.name: my-spring-cloud-config-client-service1

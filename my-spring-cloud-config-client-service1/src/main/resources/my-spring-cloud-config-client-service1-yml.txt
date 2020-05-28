@@ -1,0 +1,11 @@
+app:
+   name: my-spring-cloud -config-client-service1
+   description: Welcome to ${app.name}
+   
+my: 
+  greeting: Hello World External Update V4 with Specific application file
+  list: 
+      value: One, Two, Three
+      
+msg: 
+   greeting1: This is Greeting 1 From External application YML file Update V4, For Checking Real Time action With Specific application file
